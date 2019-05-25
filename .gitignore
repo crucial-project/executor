@@ -1,0 +1,4 @@
+serverless-executor-service.iml
+src/test/bin/exp.config
+src/test/resources/config.properties
+.idea/*
