@@ -1,6 +1,4 @@
-package org.otrack.executor.k8s;
-
-import org.otrack.executor.k8s.KubernetesExecutorService;
+package eu.cloudbutton.executor.k8s;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;

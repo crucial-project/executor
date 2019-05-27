@@ -1,19 +1,18 @@
-package org.otrack.executor.lambda;
+package eu.cloudbutton.executor.lambda;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
-import org.otrack.executor.Config;
-import org.otrack.executor.ServerlessExecutorService;
+import eu.cloudbutton.executor.Json;
+import eu.cloudbutton.executor.Config;
+import eu.cloudbutton.executor.ServerlessExecutorService;
 
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static org.otrack.executor.Json.fromJson;
-import static org.otrack.executor.Json.toJson;
-import static org.otrack.executor.Marshalling.*;
+import static eu.cloudbutton.executor.Marshalling.*;
 
 public class AWSLambdaExecutorService extends ServerlessExecutorService {
 
@@ -91,7 +90,7 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
                     (Callable<T>) () -> {
                         InvokeRequest inv = new InvokeRequest();
                         inv.setFunctionName(arn);
-                        byte[] payload = toJson(toBytes(callable)).getBytes();
+                        byte[] payload = Json.toJson(toBytes(callable)).getBytes();
                         System.out.println("Invoking #"+invocationCounter.incrementAndGet()+": "+callable+" ["+payload.length+"]");
                         inv.setPayload(ByteBuffer.wrap(payload));
                         byte[] result = client.invoke(inv).getPayload().array();

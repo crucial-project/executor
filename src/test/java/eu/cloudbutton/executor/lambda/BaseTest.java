@@ -1,13 +1,9 @@
-package org.otrack.executor.lambda;
+package eu.cloudbutton.executor.lambda;
 
-import org.otrack.executor.AbstractTest;
-import org.otrack.executor.Config;
+import eu.cloudbutton.executor.AbstractTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
