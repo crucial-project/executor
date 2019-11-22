@@ -91,11 +91,9 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
                         InvokeRequest inv = new InvokeRequest();
                         inv.setFunctionName(arn);
                         byte[] payload = Json.toJson(toBytes(callable)).getBytes();
-                        System.out.println("Invoking #"+invocationCounter.incrementAndGet()+": "+callable+" ["+payload.length+"]");
                         inv.setPayload(ByteBuffer.wrap(payload));
                         byte[] result = client.invoke(inv).getPayload().array();
                         byte[] result2 = Arrays.copyOfRange(result,1, result.length-1); // FIXME
-                        System.out.println("Received ["+result.length+"]");
                         return (T) fromBytes(Base64.getDecoder().decode(result2));
                     });
         });

@@ -40,8 +40,9 @@ then
     APP_TEST_JAR="$(config app)-$(config version)-tests.jar"
     CODE_DIR=${TMP_DIR}/code
     rm -Rf ${CODE_DIR}
+    mkdir -p ${CODE_DIR}
     rm -f ${TMP_DIR}/code.zip
-    mkdir -p ${CODE_DIR}/lib
+    # mkdir -p ${CODE_DIR}/lib
     # cp -Rf ${TARGET_DIR}/lib ${CODE_DIR}
     cp -Rf ${TARGET_DIR}/classes/* ${CODE_DIR}/
     cp -Rf ${TARGET_DIR}/test-classes/* ${CODE_DIR}/
@@ -50,6 +51,8 @@ then
     aws lambda create-function \
     	--function-name ${AWS_LAMBDA_FUNCTION_NAME} \
     	--runtime java8 \
+    	--timeout 60 \
+	    --memory-size 2048 \
     	--role ${AWS_ROLE} \
     	--handler ${AWS_LAMBDA_FUNCTION_HANDLER} \
     	--zip-file fileb://${TMP_DIR}/code.zip  > ${TMP_DIR}/log.dat
