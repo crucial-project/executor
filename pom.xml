@@ -39,12 +39,6 @@
             <version>${version.aws-lambda-java-core}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${version.google-gson}</version>
-        </dependency>
-
         <!-- TEST -->
 
         <dependency>
