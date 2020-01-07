@@ -3,6 +3,7 @@ package eu.cloudbutton.executor.lambda;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
+import com.amazonaws.services.lambda.model.InvocationType;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import eu.cloudbutton.executor.Json;
 import eu.cloudbutton.executor.Config;
@@ -19,10 +20,12 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
     private String region;
     private String arn;
     private AWSLambda client;
+    private boolean async;
 
     public AWSLambdaExecutorService(Properties properties){
         this.region = properties.containsKey(Config.AWS_LAMBDA_REGION) ? properties.getProperty(Config.AWS_LAMBDA_REGION) : Config.AWS_LAMBDA_REGION_DEFAULT;
         this.arn = properties.containsKey(Config.AWS_LAMBDA_FUNCTION_ARN) ? properties.getProperty(Config.AWS_LAMBDA_FUNCTION_ARN) : Config.AWS_LAMBDA_FUNCTION_ARN_DEFAULT;
+        this.async = Boolean.parseBoolean(properties.containsKey(Config.AWS_LAMBDA_FUNCTION_ASYNC) ? properties.getProperty(Config.AWS_LAMBDA_FUNCTION_ASYNC) : Config.AWS_LAMBDA_FUNCTION_ASYNC_DEFAULT);
         this.client = AWSLambdaClientBuilder.standard()
                 .withRegion(this.region)
                 .withClientConfiguration(
@@ -90,9 +93,11 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
                     (Callable<T>) () -> {
                         InvokeRequest inv = new InvokeRequest();
                         inv.setFunctionName(arn);
+                        if (async) { inv.setInvocationType(InvocationType.Event);}
                         byte[] payload = Json.toJson(toBytes(callable)).getBytes();
                         inv.setPayload(ByteBuffer.wrap(payload));
                         byte[] result = client.invoke(inv).getPayload().array();
+                        if (result.length == 0) return  null;
                         byte[] result2 = Arrays.copyOfRange(result,1, result.length-1); // FIXME
                         return (T) fromBytes(Base64.getDecoder().decode(result2));
                     });
