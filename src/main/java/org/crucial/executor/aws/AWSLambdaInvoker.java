@@ -1,11 +1,11 @@
-package crucial.executor.aws;
+package org.crucial.executor.aws;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.*;
-import crucial.executor.Json;
-import crucial.executor.Config;
+import org.crucial.executor.Json;
+import org.crucial.executor.Config;
 
 import java.nio.ByteBuffer;
 import java.util.Properties;

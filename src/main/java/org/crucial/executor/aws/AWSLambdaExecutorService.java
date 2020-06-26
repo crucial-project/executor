@@ -1,8 +1,9 @@
-package crucial.executor.aws;
+package org.crucial.executor.aws;
 
 
 import com.amazonaws.services.lambda.model.InvokeResult;
-import crucial.executor.ServerlessExecutorService;
+import org.crucial.executor.ServerlessExecutorService;
+import org.crucial.executor.Config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
 
     public AWSLambdaExecutorService() {
         Properties properties = System.getProperties();
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(crucial.executor.Config.CONFIG_FILE)) {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(Config.CONFIG_FILE)) {
             properties.load(is);
         } catch (IOException e) {
             e.printStackTrace();

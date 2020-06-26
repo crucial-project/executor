@@ -1,4 +1,4 @@
-package crucial.executor;
+package org.crucial.executor;
 
 import java.io.IOException;
 import java.io.Serializable;

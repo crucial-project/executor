@@ -1,4 +1,4 @@
-package crucial.executor;
+package org.crucial.executor;
 
 public class Config {
     public static final String CONFIG_FILE = "config.properties";

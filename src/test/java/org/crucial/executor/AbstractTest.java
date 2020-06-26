@@ -1,6 +1,4 @@
-package crucial.executor;
-
-import crucial.executor.Config;
+package org.crucial.executor;
 
 import java.io.IOException;
 import java.io.InputStream;

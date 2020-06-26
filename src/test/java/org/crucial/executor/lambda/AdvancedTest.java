@@ -1,6 +1,8 @@
-package crucial.executor;
+ package org.crucial.executor.lambda;
 
-import crucial.executor.aws.AWSLambdaExecutorService;
+import org.crucial.executor.IterativeRunnable;
+import org.crucial.executor.ServerlessExecutorService;
+import org.crucial.executor.aws.AWSLambdaExecutorService;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
@@ -13,7 +15,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-public class ServerlessExecutorServiceTest {
+public class AdvancedTest
+{
     @Test
     public void testSubmit() throws ExecutionException, InterruptedException {
         final String ret = "test";
@@ -22,12 +25,11 @@ public class ServerlessExecutorServiceTest {
         es.setLocal(true);
 
         Future<String> future = es.submit((Serializable & Callable<String>) () -> {
-            System.out.println("I am run.");
+            System.out.println("Run.");
             return ret;
         });
 
         assert future.get().equals(ret);
-
 
         Future<?> futureR = es.submit((Serializable & Runnable) () -> System.out.println("I am run."));
 
@@ -37,7 +39,7 @@ public class ServerlessExecutorServiceTest {
         for (int i = 0; i < 10; i++) {
             int finalI = i;
             futures.add(es.submit((Serializable & Callable<String>) () -> {
-                System.out.println("I am run. " + finalI);
+                System.out.println("Run. " + finalI);
                 return ret;
             }));
         }
@@ -59,7 +61,7 @@ public class ServerlessExecutorServiceTest {
         List<Callable<String>> myTasks = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(0, 10).forEach(i ->
                 myTasks.add((Serializable & Callable<String>) () -> {
-                    System.out.println("I am run." + i);
+                    System.out.println("Run." + i);
                     return ret;
                 }));
         List<Future<String>> futures = es.invokeAll(myTasks);
@@ -73,9 +75,9 @@ public class ServerlessExecutorServiceTest {
         ServerlessExecutorService es = new AWSLambdaExecutorService();
         es.setLocal(true);
 
-        System.out.println("EXECUTOR:");
+        System.out.println("Executor:");
         try {
-            es.invokeIterativeTask((IterativeRunnable) index -> System.out.println("HI " + index),
+            es.invokeIterativeTask((IterativeRunnable) index -> System.out.println("Index " + index),
                     2, 0, 10);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -83,11 +85,12 @@ public class ServerlessExecutorServiceTest {
         System.out.println("With finalize:");
         try {
             es.invokeIterativeTask(
-                    (IterativeRunnable) index -> System.out.println("HI " + index),
+                    (IterativeRunnable) index -> System.out.println("Index " + index),
                     2, 0, 10,
-                    (Serializable & Runnable) () -> System.out.println("I'm finished"));
+                    (Serializable & Runnable) () -> System.out.println("Over"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
 }

@@ -1,8 +1,8 @@
-package crucial.executor.aws;
+package org.crucial.executor.aws;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import crucial.executor.CloudThreadHandler;
+import org.crucial.executor.CloudThreadHandler;
 
 public class AWSLambdaHandler extends CloudThreadHandler
         implements RequestHandler<byte[], byte[]> {

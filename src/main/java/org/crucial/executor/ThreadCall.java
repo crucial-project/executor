@@ -1,4 +1,4 @@
-package crucial.executor;
+package org.crucial.executor;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;

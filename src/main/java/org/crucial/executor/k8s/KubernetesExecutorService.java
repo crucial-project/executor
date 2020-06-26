@@ -1,6 +1,6 @@
-package crucial.executor.k8s;
+package org.crucial.executor.k8s;
 
-import crucial.executor.ServerlessExecutorService;
+import org.crucial.executor.ServerlessExecutorService;
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.apis.BatchV1Api;

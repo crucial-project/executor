@@ -1,4 +1,4 @@
-package crucial.executor;
+package org.crucial.executor;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,11 +27,11 @@ public abstract class CloudThread extends Thread {
 
         System.out.println(this.printPrefix() + "Start CloudThread.");
 
-        crucial.executor.ThreadCall call = new crucial.executor.ThreadCall(this.getName());
+        ThreadCall call = new ThreadCall(this.getName());
         call.setTarget(target);
 
         try {
-            byte[] bytesCall = crucial.executor.ByteMarshaller.toBytes(call);
+            byte[] bytesCall = ByteMarshaller.toBytes(call);
             if (local) invokeLocal(bytesCall);
             else invoke(bytesCall);
         } catch (IOException e) {
@@ -48,7 +48,7 @@ public abstract class CloudThread extends Thread {
     protected abstract void invoke(byte[] threadCall);
 
     private void invokeLocal(byte[] threadCall) {
-        crucial.executor.CloudThreadHandler handler = new crucial.executor.CloudThreadHandler();
+        CloudThreadHandler handler = new CloudThreadHandler();
         handler.handle(threadCall);
     }
 

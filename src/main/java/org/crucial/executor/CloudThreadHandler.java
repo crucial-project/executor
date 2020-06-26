@@ -1,16 +1,14 @@
-package crucial.executor;
+package org.crucial.executor;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
-
-import static crucial.executor.ByteMarshaller.*;
 
 public class CloudThreadHandler {
 
     protected byte[] handle(byte[] input) {
         Object result = null;
         try {
-            crucial.executor.ThreadCall call = fromBytes(input);
+            ThreadCall call = ByteMarshaller.fromBytes(input);
             System.out.println(call.getThreadName() + " loaded.");
             Callable c = call.getTarget();
             result = c.call();
@@ -21,7 +19,7 @@ public class CloudThreadHandler {
             result = e;
         }
         try {
-            return toBytes(result);
+            return ByteMarshaller.toBytes(result);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -1,7 +1,7 @@
-package crucial.executor.lambda;
+package org.crucial.executor.lambda;
 
-import crucial.executor.AbstractTest;
-import crucial.executor.aws.AWSLambdaExecutorService;
+import org.crucial.executor.AbstractTest;
+import org.crucial.executor.aws.AWSLambdaExecutorService;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;

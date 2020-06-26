@@ -1,4 +1,4 @@
-package crucial.executor;
+package org.crucial.executor;
 
 import com.google.gson.Gson;
 
