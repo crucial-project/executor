@@ -1,9 +1,9 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.cloudbutton</groupId>
-    <artifactId>serverless-executor-service</artifactId>
-    <name>serverless-executor-service</name>
+    <groupId>crucial</groupId>
+    <artifactId>executor</artifactId>
+    <name>executor</name>
     <version>0.1.Final</version>
     <description>An executor service for serverless code.</description>
 

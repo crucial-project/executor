@@ -1,6 +1,7 @@
-package eu.cloudbutton.executor.lambda;
+package crucial.executor.lambda;
 
-import eu.cloudbutton.executor.AbstractTest;
+import crucial.executor.AbstractTest;
+import crucial.executor.aws.AWSLambdaExecutorService;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ public class BaseTest extends AbstractTest {
     @Test
     public void helloWorld() throws ExecutionException, InterruptedException {
         final String welcome = "Hello World!";
-        AWSLambdaExecutorService service = new AWSLambdaExecutorService(properties);
+        AWSLambdaExecutorService service = new AWSLambdaExecutorService();
         Future<String> future = service.submit((Serializable & Callable<String>) () -> {
             System.out.println(welcome);
             return welcome;

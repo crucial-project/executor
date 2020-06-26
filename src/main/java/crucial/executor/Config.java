@@ -1,7 +1,6 @@
-package eu.cloudbutton.executor;
+package crucial.executor;
 
 public class Config {
-
     public static final String CONFIG_FILE = "config.properties";
 
     public static final String AWS_LAMBDA_REGION = "aws.region";

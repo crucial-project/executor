@@ -1,13 +1,12 @@
-package eu.cloudbutton.executor;
+package crucial.executor;
 
-import com.google.gson.Gson;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.util.Base64;
-
-public class Marshalling {
-
+public class ByteMarshaller {
     public static byte[] toBytes(Object o) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -18,5 +17,4 @@ public class Marshalling {
     public static <T> T fromBytes(byte[] input) throws IOException, ClassNotFoundException {
         return (T) new ObjectInputStream(new ByteArrayInputStream(input)).readObject();
     }
-
 }
