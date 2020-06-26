@@ -23,6 +23,11 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
         invoker = new AWSLambdaInvoker(properties);
     }
 
+    public AWSLambdaExecutorService(Properties properties ) {
+        invoker = new AWSLambdaInvoker(properties);
+    }
+
+
     @Override
     protected byte[] invokeExternal(byte[] threadCall) {
         System.out.println(this.printPrefix() + "Calling AWS Lambda.");
