@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJ_DIR=${DIR}/../../..
 TARGET_DIR=${PROJ_DIR}/target
 TMP_DIR=/tmp
-CONFIG_FILE=${DIR}/exp.config
+CONFIG_FILE=${DIR}/../resources/config.properties
 
 config() {
     if [ $# -ne 1 ]; then

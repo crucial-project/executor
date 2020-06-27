@@ -4,7 +4,7 @@
     <groupId>org.crucial</groupId>
     <artifactId>executor</artifactId>
     <name>executor</name>
-    <version>0.1.Final</version>
+    <version>1.0</version>
     <description>An executor service for serverless.</description>
 
     <properties>
