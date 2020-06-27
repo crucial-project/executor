@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class AWSLambdaExecutorService extends ServerlessExecutorService {
 
-    private final AWSLambdaInvoker invoker;
+    private AWSLambdaInvoker invoker;
     private boolean logging;
 
     public AWSLambdaExecutorService() {
@@ -22,13 +22,18 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        invoker = new AWSLambdaInvoker(properties);
-        logging = Boolean.parseBoolean(properties.containsKey(Config.AWS_LAMBDA_LOGGING) ?
-                properties.getProperty(Config.AWS_LAMBDA_LOGGING) : Config.AWS_LAMBDA_LOGGING_DEFAULT);
+        init(properties);
     }
 
     public AWSLambdaExecutorService(Properties properties ) {
+        init(properties);
+    }
+
+    // FIXME
+    private void init(Properties properties) {
         invoker = new AWSLambdaInvoker(properties);
+        logging = Boolean.parseBoolean(properties.containsKey(Config.AWS_LAMBDA_LOGGING) ?
+                properties.getProperty(Config.AWS_LAMBDA_LOGGING) : Config.AWS_LAMBDA_LOGGING_DEFAULT);
     }
 
 
