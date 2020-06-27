@@ -1,8 +1,7 @@
- package org.crucial.executor.lambda;
+ package org.crucial.executor.aws;
 
 import org.crucial.executor.IterativeRunnable;
 import org.crucial.executor.ServerlessExecutorService;
-import org.crucial.executor.aws.AWSLambdaExecutorService;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ public class AdvancedTest
 
         assert future.get().equals(ret);
 
-        Future<?> futureR = es.submit((Serializable & Runnable) () -> System.out.println("I am run."));
+        Future<?> futureR = es.submit((Serializable & Runnable) () -> System.out.println("Called."));
 
         assert futureR.get() == null;
 

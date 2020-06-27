@@ -47,20 +47,20 @@ then
     cp -Rf ${TARGET_DIR}/classes/* ${CODE_DIR}/
     cp -Rf ${TARGET_DIR}/test-classes/* ${CODE_DIR}/
     cd ${TMP_DIR}/code && zip -r code.zip * && mv code.zip .. && cd ${PROJ_DIR} # FIXME
-    # aws s3 cp ${TMP_DIR}/code.zip s3://${AWS_S3_BUCKET}/${AWS_S3_KEY}
     aws lambda create-function \
+	--region=${AWS_REGION} \
     	--function-name ${AWS_LAMBDA_FUNCTION_NAME} \
     	--runtime java8 \
-    	--timeout 60 \
-	    --memory-size 2048 \
+    	--timeout 5 \
     	--role ${AWS_ROLE} \
     	--handler ${AWS_LAMBDA_FUNCTION_HANDLER} \
     	--zip-file fileb://${TMP_DIR}/code.zip  > ${TMP_DIR}/log.dat
     cat ${CONFIG_FILE}
-    echo "aws.lambda.function.arn=$(grep FunctionArn ${TMP_DIR}/log.dat  | awk -F": " '{print $2}' | sed s,[\"\,],,g)"
+    # echo "aws.lambda.function.arn=$(grep FunctionArn ${TMP_DIR}/log.dat  | awk -F": " '{print $2}' | sed s,[\"\,],,g)"
 elif [[ "$1" == "-delete" ]]
 then
     aws lambda delete-function \
+	--region=${AWS_REGION} \
 	--function-name ${AWS_LAMBDA_FUNCTION_NAME}	
 else
     usage

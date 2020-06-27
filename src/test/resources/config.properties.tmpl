@@ -1,9 +1,8 @@
 app=crucial-executor
+logging=false
 version=0.1-SNAPSHOT
 aws.region=us-east-1
 aws.iam.role=arn:aws:iam::ACCOUNT:role/ROLE_NAME
-aws.s3.bucket=S3_BUCKET
-aws.s3.key=MY_PACKAGE.zip
 aws.lambda.function.name=crucial-cloud-thread
 aws.lambda.function.handler=org.crucial.executor.aws.AWSLambdaHandler
 aws.lambda.function.arn=arn:aws:lambda:us-east-1:ACCOUNT:function:crucial-cloud-thread

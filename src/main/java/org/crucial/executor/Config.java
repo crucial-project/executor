@@ -3,6 +3,9 @@ package org.crucial.executor;
 public class Config {
     public static final String CONFIG_FILE = "config.properties";
 
+    public static final String AWS_LAMBDA_LOGGING= "logging";
+    public static final String AWS_LAMBDA_LOGGING_DEFAULT= "false";
+
     public static final String AWS_LAMBDA_REGION = "aws.region";
     public static final String AWS_LAMBDA_REGION_DEFAULT = "AWS_REGION";
 

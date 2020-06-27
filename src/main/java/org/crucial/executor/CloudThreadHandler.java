@@ -9,7 +9,6 @@ public class CloudThreadHandler {
         Object result = null;
         try {
             ThreadCall call = ByteMarshaller.fromBytes(input);
-            System.out.println(call.getThreadName() + " loaded.");
             Callable c = call.getTarget();
             result = c.call();
         } catch (IOException | ClassNotFoundException e) {

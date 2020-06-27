@@ -11,7 +11,9 @@ import java.util.Base64;
 import java.util.Properties;
 
 public class AWSLambdaExecutorService extends ServerlessExecutorService {
+
     private final AWSLambdaInvoker invoker;
+    private boolean logging;
 
     public AWSLambdaExecutorService() {
         Properties properties = System.getProperties();
@@ -21,6 +23,8 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
             e.printStackTrace();
         }
         invoker = new AWSLambdaInvoker(properties);
+        logging = Boolean.parseBoolean(properties.containsKey(Config.AWS_LAMBDA_LOGGING) ?
+                properties.getProperty(Config.AWS_LAMBDA_LOGGING) : Config.AWS_LAMBDA_LOGGING_DEFAULT);
     }
 
     public AWSLambdaExecutorService(Properties properties ) {
@@ -30,13 +34,15 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
 
     @Override
     protected byte[] invokeExternal(byte[] threadCall) {
-        System.out.println(this.printPrefix() + "Calling AWS Lambda.");
+        if (logging) System.out.println(this.printPrefix() + "Calling AWS Lambda.");
         InvokeResult result = invoker.invoke(threadCall);
-        System.out.println(this.printPrefix() + "AWS call completed.");
-        if (logs) {
-            System.out.println(this.printPrefix() + "Showing Lambda Tail Logs.\n");
-            assert result != null;
-            System.out.println(new String(Base64.getDecoder().decode(result.getLogResult())));
+        assert result != null;
+        if (logging) System.out.println(this.printPrefix() + "AWS call completed.");
+        if (logging) {
+            String log = new String(Base64.getDecoder().decode(result.getLogResult()));
+            for(String line : log.split(System.getProperty("line.separator"))) {
+                System.out.println(this.printPrefix() + line);
+            }
         }
         return Base64.getMimeDecoder().decode(result.getPayload().array());
     }

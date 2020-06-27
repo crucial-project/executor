@@ -19,7 +19,6 @@ import java.util.concurrent.TimeoutException;
 public abstract class ServerlessExecutorService implements ExecutorService {
 
     private final String executorName = UUID.randomUUID().toString();
-    protected boolean logs = true;
     private ExecutorService executorService;
     private boolean local = false;
     private boolean isShutdown = false;
@@ -240,10 +239,6 @@ public abstract class ServerlessExecutorService implements ExecutorService {
 
     public void setLocal(boolean local) {
         this.local = local;
-    }
-
-    public void setLogs(boolean logs) {
-        this.logs = logs;
     }
 
     public abstract void closeInvoker();
