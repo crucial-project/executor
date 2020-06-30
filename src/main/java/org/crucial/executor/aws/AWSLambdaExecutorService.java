@@ -43,7 +43,7 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
         InvokeResult result = invoker.invoke(threadCall);
         assert result != null;
         if (logging) System.out.println(this.printPrefix() + "AWS call completed.");
-        if (logging) {
+        if (logging) { // FIXME not comptaible w. -async.
             String log = new String(Base64.getDecoder().decode(result.getLogResult()));
             for(String line : log.split(System.getProperty("line.separator"))) {
                 System.out.println(this.printPrefix() + line);

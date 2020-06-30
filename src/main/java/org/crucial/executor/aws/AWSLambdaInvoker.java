@@ -72,7 +72,7 @@ class AWSLambdaInvoker {
         }
         req.setPayload(ByteBuffer.wrap(Json.toJson(payload).getBytes()));
         if (tailLogs) req.setLogType(LogType.Tail);
-        return lambdaClient.invoke(req);
+        return this.async ? lambdaClient.invokeAsync(req) : lambdaClient.invoke(req);
     }
 
     void stop() {
