@@ -21,7 +21,7 @@ public class AdvancedTest
         final String ret = "test";
 
         ServerlessExecutorService es = new AWSLambdaExecutorService();
-        es.setLocal(true);
+        es.setLocal(false);
 
         Future<String> future = es.submit((Serializable & Callable<String>) () -> {
             System.out.println("Run.");
@@ -56,7 +56,8 @@ public class AdvancedTest
         final String ret = "test";
 
         ServerlessExecutorService es = new AWSLambdaExecutorService();
-        es.setLocal(true);
+        es.setLocal(false);
+	
         List<Callable<String>> myTasks = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(0, 10).forEach(i ->
                 myTasks.add((Serializable & Callable<String>) () -> {
@@ -72,7 +73,7 @@ public class AdvancedTest
     @Test
     public void testInvokeIterativeTask() {
         ServerlessExecutorService es = new AWSLambdaExecutorService();
-        es.setLocal(true);
+        es.setLocal(false);
 
         System.out.println("Executor:");
         try {
