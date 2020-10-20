@@ -87,7 +87,7 @@ public class AdvancedTest
             es.invokeIterativeTask(
                     (IterativeRunnable) index -> System.out.println("Index " + index),
                     2, 0, 10,
-                    (Runnable) () -> System.out.println("Over"));
+                    (Serializable & Runnable) () -> System.out.println("Over"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
