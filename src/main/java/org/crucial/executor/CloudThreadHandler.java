@@ -1,6 +1,9 @@
 package org.crucial.executor;
 
+import software.amazon.awssdk.core.SdkBytes;
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 public class CloudThreadHandler {
@@ -18,7 +21,8 @@ public class CloudThreadHandler {
             result = e;
         }
         try {
-            return ByteMarshaller.toBytes(result);
+            byte[] ret = ByteMarshaller.toBytes(result);
+            return ret;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

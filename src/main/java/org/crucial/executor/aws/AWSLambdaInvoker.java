@@ -1,13 +1,12 @@
 package org.crucial.executor.aws;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.lambda.AWSLambda;
-import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
-import com.amazonaws.services.lambda.model.*;
-import org.crucial.executor.Json;
 import org.crucial.executor.Config;
+import org.crucial.executor.Json;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.*;
 
-import java.nio.ByteBuffer;
 import java.util.Properties;
 
 /**
@@ -16,7 +15,7 @@ import java.util.Properties;
  * @author Daniel
  */
 class AWSLambdaInvoker {
-    private final AWSLambda lambdaClient;
+    private final LambdaClient lambdaClient;
     private final String region;
     private final String arn;
     private final boolean async;
@@ -28,20 +27,13 @@ class AWSLambdaInvoker {
                 properties.getProperty(Config.AWS_LAMBDA_FUNCTION_ARN) : Config.AWS_LAMBDA_FUNCTION_ARN_DEFAULT;
         this.async = Boolean.parseBoolean(properties.containsKey(Config.AWS_LAMBDA_FUNCTION_ASYNC) ?
                 properties.getProperty(Config.AWS_LAMBDA_FUNCTION_ASYNC) : Config.AWS_LAMBDA_FUNCTION_ASYNC_DEFAULT);
-        lambdaClient = AWSLambdaClientBuilder.standard()
-                .withRegion(region)
-                .withClientConfiguration(
-                        new ClientConfiguration()
-                                .withMaxConnections(1000)
-                                .withSocketTimeout(600_000)
-                                .withConnectionTimeout(10 * 1000)
-                                .withMaxErrorRetry(3)
-                ).build();
+        lambdaClient = LambdaClient.builder()
+                .region(Region.of(region))
+                .build();
     }
 
     public void initClient() {
-        GetFunctionRequest gf = new GetFunctionRequest();
-        gf.setFunctionName(arn);
+        GetFunctionRequest gf = GetFunctionRequest.builder().functionName(arn).build();
         lambdaClient.getFunction(gf);
     }
 
@@ -51,7 +43,7 @@ class AWSLambdaInvoker {
      * @param payload Input for the Lambda
      * @return InvokeResult of the call.
      */
-    InvokeResult invoke(byte[] payload) {
+    InvokeResponse invoke(byte[] payload) {
         return invoke(payload, true);
     }
 
@@ -62,21 +54,21 @@ class AWSLambdaInvoker {
      * @param tailLogs Request tail logs?
      * @return InvokeResult of the call.
      */
-    InvokeResult invoke(byte[] payload, boolean tailLogs) {
-        InvokeRequest req = new InvokeRequest();
-        req.setFunctionName(arn);
+    InvokeResponse invoke(byte[] payload, boolean tailLogs) {
+        InvokeRequest.Builder builder = InvokeRequest.builder();
+        builder.functionName(arn);
         if (async) {
-            req.setInvocationType(InvocationType.Event);
+            builder.invocationType(InvocationType.EVENT);
         } else {
-            req.setInvocationType(InvocationType.RequestResponse);
+            builder.invocationType(InvocationType.REQUEST_RESPONSE);
         }
-        req.setPayload(ByteBuffer.wrap(Json.toJson(payload).getBytes()));
-        if (tailLogs) req.setLogType(LogType.Tail);
-        return lambdaClient.invoke(req);
+        builder.payload(SdkBytes.fromByteArray(Json.toJson(payload).getBytes()));
+        if (tailLogs) builder.logType(LogType.TAIL);
+        return lambdaClient.invoke(builder.build());
     }
 
     void stop() {
-        lambdaClient.shutdown();
+        lambdaClient.close();
     }
 
 }

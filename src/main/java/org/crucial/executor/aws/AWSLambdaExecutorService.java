@@ -1,12 +1,13 @@
 package org.crucial.executor.aws;
 
-
-import com.amazonaws.services.lambda.model.InvokeResult;
-import org.crucial.executor.ServerlessExecutorService;
 import org.crucial.executor.Config;
+import org.crucial.executor.ServerlessExecutorService;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Properties;
 
@@ -36,20 +37,19 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
                 properties.getProperty(Config.AWS_LAMBDA_LOGGING) : Config.AWS_LAMBDA_LOGGING_DEFAULT);
     }
 
-
     @Override
     protected byte[] invokeExternal(byte[] threadCall) {
         if (logging) System.out.println(this.printPrefix() + "Calling AWS Lambda.");
-        InvokeResult result = invoker.invoke(threadCall);
-        assert result != null;
+        InvokeResponse response = invoker.invoke(threadCall);
+        assert response != null;
         if (logging) System.out.println(this.printPrefix() + "AWS call completed.");
-        if (logging) { // FIXME not comptaible w. -async.
-            String log = new String(Base64.getDecoder().decode(result.getLogResult()));
+        if (logging) { // FIXME not compatible w. -async.
+            String log = new String(Base64.getDecoder().decode(response.logResult()));
             for(String line : log.split(System.getProperty("line.separator"))) {
                 System.out.println(this.printPrefix() + line);
             }
         }
-        return Base64.getMimeDecoder().decode(result.getPayload().array());
+        return Base64.getMimeDecoder().decode(response.payload().asByteArray());
     }
 
     public void closeInvoker() {

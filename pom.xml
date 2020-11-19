@@ -4,38 +4,44 @@
     <groupId>org.crucial</groupId>
     <artifactId>executor</artifactId>
     <name>executor</name>
-    <version>1.0</version>
+    <version>2.0</version>
     <description>An executor service for serverless.</description>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.11</maven.compiler.source>
+        <maven.compiler.target>1.11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.testng>6.14.3</version.testng>
-        <version.dso>1.0</version.dso>
-        <version.io-kubernetes-client-java>3.0.0</version.io-kubernetes-client-java>
-        <version.aws-java-sdk-lambda>1.11.748</version.aws-java-sdk-lambda>
-        <version.aws-lambda-java-core>1.2.0</version.aws-lambda-java-core>
+<!--        <version.io-kubernetes-client-java>3.0.0</version.io-kubernetes-client-java>-->
+        <version.aws-java-sdk-lambda>1.11.896</version.aws-java-sdk-lambda>
+        <version.aws.lambda.java>1.2.0</version.aws.lambda.java>
+        <version.gson>2.8.6</version.gson>
     </properties>
     
     <dependencies>
 
-        <dependency>
-            <groupId>io.kubernetes</groupId>
-            <artifactId>client-java</artifactId>
-            <version>${version.io-kubernetes-client-java}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-lambda</artifactId>
-            <version>${version.aws-java-sdk-lambda}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.kubernetes</groupId>-->
+<!--            <artifactId>client-java</artifactId>-->
+<!--            <version>${version.io-kubernetes-client-java}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
-            <version>${version.aws-lambda-java-core}</version>
+            <version>${version.aws.lambda.java}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${version.gson}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>lambda</artifactId>
+            <version>2.15.23</version>
         </dependency>
 
         <!-- TEST -->
@@ -56,6 +62,14 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

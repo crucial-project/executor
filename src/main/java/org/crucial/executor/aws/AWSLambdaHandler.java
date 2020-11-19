@@ -6,6 +6,7 @@ import org.crucial.executor.CloudThreadHandler;
 
 public class AWSLambdaHandler extends CloudThreadHandler
         implements RequestHandler<byte[], byte[]> {
+
     @Override
     public byte[] handleRequest(byte[] bytes, Context context) {
         return handle(bytes);

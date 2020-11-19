@@ -24,7 +24,7 @@ public class AdvancedTest
         es.setLocal(false);
 
         Future<String> future = es.submit((Serializable & Callable<String>) () -> {
-            System.out.println("Run.");
+            System.out.println("A");
             return ret;
         });
 
@@ -59,7 +59,7 @@ public class AdvancedTest
         es.setLocal(false);
 	
         List<Callable<String>> myTasks = Collections.synchronizedList(new ArrayList<>());
-        IntStream.range(0, 10).forEach(i ->
+        IntStream.range(0, 1).forEach(i ->
                 myTasks.add((Serializable & Callable<String>) () -> {
                     System.out.println("Run." + i);
                     return ret;

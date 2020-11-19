@@ -1,8 +1,8 @@
 package org.crucial.executor.aws;
 
-import com.amazonaws.services.lambda.model.InvokeResult;
 import org.crucial.executor.CloudThread;
 import org.crucial.executor.Config;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +28,12 @@ public class AWSLambdaThread extends CloudThread {
     @Override
     protected void invoke(byte[] threadCall) {
         System.out.println(this.printPrefix() + "Calling AWS Lambda.");
-        InvokeResult result = invoker.invoke(threadCall);
+        InvokeResponse response = invoker.invoke(threadCall);
         System.out.println(this.printPrefix() + "AWS call completed.");
         if (logs) {
             System.out.println(this.printPrefix() + "Showing Lambda Tail Logs.\n");
-            assert result != null;
-            System.out.println(new String(Base64.getDecoder().decode(result.getLogResult())));
+            assert response != null;
+            System.out.println(new String(Base64.getDecoder().decode(response.logResult())));
         }
     }
 

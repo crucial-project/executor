@@ -25,7 +25,7 @@ public abstract class ServerlessExecutorService implements ExecutorService {
     private List<Future<?>> submittedTasks = new LinkedList<>();
 
     public ServerlessExecutorService() {
-        executorService = Executors.newFixedThreadPool(1000);
+        executorService = Executors.newCachedThreadPool();
     }
 
     protected String printExecutorPrefix() {
