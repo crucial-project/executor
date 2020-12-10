@@ -22,9 +22,19 @@ public class BaseTest extends AbstractTest {
 	ExecutorService service = new AWSLambdaExecutorService();
 	service.submit((Serializable & Callable<String>) () -> {
 		return null;
-	    });
-	
+	    });	
     }
+
+    public void intTest() throws InterruptedException, ExecutionException {
+
+	ExecutorService service = new AWSLambdaExecutorService();
+	Future<Integer> future =
+	    service.submit((Serializable & Callable<Integer>) () -> {
+		return 1;
+	    });
+	assert future.get() == 1;
+    }
+
 
 }
 
