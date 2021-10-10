@@ -45,7 +45,7 @@ then
     cp -Rf ${TARGET_DIR}/test-classes/* ${CODE_DIR}/
     cd ${TMP_DIR}/code && zip -r code.zip * && mv code.zip .. && cd ${PROJ_DIR} # FIXME
     aws lambda create-function \
-	     --region=${AWS_REGION} \
+        --region=${AWS_REGION} \
     	--function-name ${AWS_LAMBDA_FUNCTION_NAME} \
     	--runtime java11 \
     	--timeout 30 \

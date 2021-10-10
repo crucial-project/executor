@@ -16,14 +16,7 @@ public abstract class CloudThread extends Thread {
 
     @Override
     public void run() {
-//        Class klass = target.getClass();
-//        if (isInnerClass(klass) && !isStaticClass(klass)) {
-//            throw new RuntimeException(this.printPrefix()
-//                    + "Illegal class definition. Cannot be inner unless static.");
-//        }
         if (target == null) throw new NullPointerException();
-        if (!(target instanceof Serializable))
-            throw new IllegalArgumentException("Tasks must be Serializable");
 
         System.out.println(this.printPrefix() + "Start CloudThread.");
 
