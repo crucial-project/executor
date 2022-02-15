@@ -2,12 +2,7 @@ package org.crucial.executor;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +19,10 @@ public abstract class ServerlessExecutorService implements ExecutorService {
     private boolean isShutdown = false;
     private List<Future<?>> submittedTasks = new LinkedList<>();
 
+    private boolean listen = false;
+    private int port = 0;
+    private String serviceName = null;
+
     public ServerlessExecutorService() {
         executorService = Executors.newCachedThreadPool();
     }
@@ -38,6 +37,10 @@ public abstract class ServerlessExecutorService implements ExecutorService {
 
     protected String printPrefix() {
         return printExecutorPrefix() + "-" + printThreadPrefix();
+    }
+
+    protected String getThreadPrefix() {
+        return Thread.currentThread().getName() ;
     }
 
     public void shutdown() {
@@ -92,6 +95,24 @@ public abstract class ServerlessExecutorService implements ExecutorService {
         return f;
     }
 
+    public <T> Future<T> submitListener(String name, int port, Callable<T> task) {
+        this.listen = true;
+        this.port = port;
+        this.serviceName = name;
+        if (task == null) throw new NullPointerException();
+        if (!(task instanceof Serializable))
+            throw new IllegalArgumentException("Tasks must be Serializable");
+        Callable<T> localCallable = () -> {
+            ThreadCall call = new ThreadCall("ServerlessExecutor-"
+                    + Thread.currentThread().getName());
+            call.setTarget(task);
+            return invoke(call);
+        };
+        Future<T> f = executorService.submit(localCallable);
+        submittedTasks.add(f);
+        return f;
+    }
+
     public <T> Future<T> submit(Runnable task, T result) {
         Runnable localRunnable = generateRunnable(task);
         Future<T> f = executorService.submit(localRunnable, result);
@@ -126,6 +147,15 @@ public abstract class ServerlessExecutorService implements ExecutorService {
 
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
             throws InterruptedException {
+        List<Callable<T>> localCallables = generateCallables(tasks);
+        return executorService.invokeAll(localCallables);
+    }
+
+    public <T> List<Future<T>> invokeAllListerner(String name, int port,Collection<? extends Callable<T>> tasks)
+            throws InterruptedException {
+        this.listen = true;
+        this.port = port;
+        this.serviceName = name;
         List<Callable<T>> localCallables = generateCallables(tasks);
         return executorService.invokeAll(localCallables);
     }
@@ -230,7 +260,8 @@ public abstract class ServerlessExecutorService implements ExecutorService {
         return ByteMarshaller.fromBytes(ret);
     }
 
-    protected abstract byte[] invokeExternal(byte[] threadCall);
+    protected abstract byte[] invokeExternal(byte[] threadCall) ;
+
 
     private byte[] invokeLocal(byte[] threadCall) {
         CloudThreadHandler handler = new CloudThreadHandler();
@@ -241,7 +272,23 @@ public abstract class ServerlessExecutorService implements ExecutorService {
         this.local = local;
     }
 
+    public boolean getListen() {
+        return this.listen;
+    }
+
+    public int getport() {
+        return this.port;
+    }
+
+    public String  getServiceName() {
+        return this.serviceName;
+    }
+
     public abstract void closeInvoker();
+
+    public abstract void deleteAllJobs() ;
+
+    public abstract Dictionary<String, String> getServiceSpecs(String serviceName) ;
 
     /**
      * This is a static class and not an in-line lambda expression because it

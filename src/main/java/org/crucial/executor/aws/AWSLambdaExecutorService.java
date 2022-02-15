@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Dictionary;
 import java.util.Properties;
 
 public class AWSLambdaExecutorService extends ServerlessExecutorService {
@@ -55,4 +56,10 @@ public class AWSLambdaExecutorService extends ServerlessExecutorService {
     public void closeInvoker() {
         invoker.stop();
     }
+
+    @Override
+    public void deleteAllJobs () {}
+
+    @Override
+    public Dictionary<String, String> getServiceSpecs (String serviceName) { return null; }
 }
