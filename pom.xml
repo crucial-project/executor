@@ -4,7 +4,7 @@
     <groupId>org.crucial</groupId>
     <artifactId>executor</artifactId>
     <name>executor</name>
-    <version>2.0</version>
+    <version>3.0</version>
     <description>An executor service for serverless.</description>
 
     <properties>
@@ -12,9 +12,10 @@
         <maven.compiler.target>1.11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.testng>6.14.3</version.testng>
-<!--        <version.io-kubernetes-client-java>3.0.0</version.io-kubernetes-client-java>-->
-        <version.aws-java-sdk-lambda>1.11.896</version.aws-java-sdk-lambda>
-        <version.aws.lambda.java>1.2.0</version.aws.lambda.java>
+        <version.kubernetes-client>5.12.0</version.kubernetes-client>
+        <version.aws.lambda.java>1.2.1</version.aws.lambda.java>
+        <version.aws.sdk.lambda.java>1.11.76</version.aws.sdk.lambda.java>
+        <version.software.amazon.awssdk>2.15.26</version.software.amazon.awssdk>
         <version.gson>2.8.6</version.gson>
     </properties>
     
@@ -23,7 +24,19 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-client</artifactId>
-            <version>5.12.0</version>
+            <version>${version.kubernetes-client}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${version.gson}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-lambda</artifactId>
+            <version>${version.aws.sdk.lambda.java}</version>
         </dependency>
 
         <dependency>
@@ -41,18 +54,24 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>lambda</artifactId>
-            <version>2.15.23</version>
+            <version>${version.software.amazon.awssdk}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-
-        <!-- Dependency used for S3submitTest -->
-        <!--
-                <dependency>
-                    <groupId>com.amazonaws</groupId>
-                    <artifactId>aws-java-sdk</artifactId>
-                    <version>1.12.150</version>
-                </dependency>
-         -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
+            <version>${version.software.amazon.awssdk}</version>
+        </dependency>
 
         <!-- TEST -->
 

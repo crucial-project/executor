@@ -29,10 +29,10 @@ public class KubernetesExecutorService extends ServerlessExecutorService {
 
     @Override
     protected byte[] invokeExternal(byte[] input)  {
-        System.out.println(this.printPrefix() + "Calling K8s Job.");
+        debug(this.printPrefix() + "Calling k8s job.");
         String response = invoker.invoke(input, super.getListen(), super.getport(), super.getServiceName());
         assert response != null;
-        System.out.println(this.printPrefix() + "K8s call completed.");
+        debug(this.printPrefix() + "K8s call completed.");
 
         try {
             byte[] ret = ByteMarshaller.toBytes(response);

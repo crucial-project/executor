@@ -11,6 +11,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.crucial.executor.Config.ANSI_RED;
+import static org.crucial.executor.Config.ANSI_RESET;
+
 public abstract class ServerlessExecutorService implements ExecutorService {
 
     private final String executorName = UUID.randomUUID().toString();
@@ -289,6 +292,10 @@ public abstract class ServerlessExecutorService implements ExecutorService {
     public abstract void deleteAllJobs() ;
 
     public abstract Dictionary<String, String> getServiceSpecs(String serviceName) ;
+
+    protected void debug(String message){
+        System.err.println(ANSI_RED + message + ANSI_RESET);
+    }
 
     /**
      * This is a static class and not an in-line lambda expression because it

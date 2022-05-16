@@ -41,6 +41,7 @@ public class KubernetesInvoker {
         List<String> command = Arrays.asList("java","-classpath", libs, mainClass, Json.toJson(input));
 
         ConfigBuilder configBuilder = new ConfigBuilder();
+        configBuilder.withOauthToken("eyJhbGciOiJSUzI1NiIsImtpZCI6ImlzXzhOSjdGYjFlT3NGdU9jRWpQM3M0bWxHazl0Uzc1bUdKMnVGM0hPaWMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tcXRoNXoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjNkMDdhOTIwLTAyNDYtNDUxNi05ZDQ1LTFhN2Y5NDE3NTljMiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.rVKd9V492fqF1JRPdH0cE8X8bFannRn9spzNq0r2lL9TIHLeOsXzbrm8XHhOrIBLjJhA9YLifk8ULMr1B7lZ3QivB4Tw1oPK4qYPTp3n_ntD_bEXmDzSDo66MfzE7MRgiHO8TIcPNuBKQ3RBPbf1edB7ZqwRd-jkGhgGH0qHcPChoOfxN8TUb5T4RGlqpFZ9NFxyfeScqcxQHwtdSrp7rGz5HAMrIlb6Zra39O1IQ66vYziCAFj_dVyQ66TlRS-NF0I2-mgGM8TS2yB6sdz3f2JvE8xdjETZCEFt9atg3JaNeQYGue0d0M9Gv6ss7BGLqyl37EwYpWrg_5LB3BAyvw");
         try (KubernetesClient client = new DefaultKubernetesClient(configBuilder.build())) {
             final String namespace = "default";
             final Job job = new JobBuilder()
@@ -89,10 +90,10 @@ public class KubernetesInvoker {
             return joblog;
 
         } catch (KubernetesClientException | InterruptedException e) {
-            System.out.println("Unable to create job");
+            e.printStackTrace();
+            throw new IllegalStateException(e.getMessage());
         }
 
-        return null;
     }
 }
 
