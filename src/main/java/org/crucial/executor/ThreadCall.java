@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 class ThreadCall implements Serializable {
     private String threadName;
     private Callable target;
+    private static final long serialVersionUID = 1L;
 
     public ThreadCall(String threadName) {
         this.threadName = threadName;
