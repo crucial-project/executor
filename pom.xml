@@ -15,7 +15,7 @@
 <!--        <version.io-kubernetes-client-java>3.0.0</version.io-kubernetes-client-java>-->
         <version.aws-java-sdk-lambda>1.11.896</version.aws-java-sdk-lambda>
         <version.aws.lambda.java>1.2.0</version.aws.lambda.java>
-        <version.gson>2.8.6</version.gson>
+        <version.gson>2.8.9</version.gson>
     </properties>
     
     <dependencies>
