@@ -30,7 +30,7 @@ public class AdvancedTest {
              job-b
              cmd: grep data
         */
-        ServerlessExecutorService esK8s1 = new KubernetesExecutorService("job-b", "tmsquare/executor-image");
+        ServerlessExecutorService esK8s1 = new KubernetesExecutorService();
         esK8s1.setLocal(false);
         Future<String> future1 = esK8s1.submitListener(serviceName, port, (Serializable  & Callable<String>) () -> {
             try {
@@ -68,7 +68,7 @@ public class AdvancedTest {
              job-a
              cmd: curl URL
         */
-        ServerlessExecutorService esK8s2 = new KubernetesExecutorService("job-a", "tmsquare/executor-image");
+        ServerlessExecutorService esK8s2 = new KubernetesExecutorService();
         esK8s2.setLocal(false);
         Future<String> future2 = esK8s2.submit((Serializable & Callable<String>) () -> {
             String URL = "https://perso.telecom-paristech.fr/eagan/class/igr204/data/cars.csv";

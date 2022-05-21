@@ -8,6 +8,6 @@ public class BaseTest extends AbstractTest {
 
     @Override
     public ExecutorService initService() {
-        return new KubernetesExecutorService("test","0track/executor:latest");
+        return new KubernetesExecutorService();
     }
 }

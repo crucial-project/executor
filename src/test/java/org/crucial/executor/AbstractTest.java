@@ -4,6 +4,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.awt.geom.PathIterator;
@@ -18,6 +19,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 @Test
 public abstract class AbstractTest {
@@ -42,7 +45,7 @@ public abstract class AbstractTest {
                 service.submit((Serializable & Callable<Void>) () -> {
                     return null;
                 });
-        assert future.get() == null;
+        assertEquals(future.get(),null);
     }
 
     public void intTest() throws InterruptedException, ExecutionException {
@@ -50,7 +53,7 @@ public abstract class AbstractTest {
                 service.submit((Serializable & Callable<Integer>) () -> {
                     return 1;
                 });
-        assert future.get() == 1;
+        assertEquals(future.get(),new Integer(1));
     }
 
     public void multipleTest() throws InterruptedException, ExecutionException {
@@ -62,7 +65,7 @@ public abstract class AbstractTest {
                                 }).collect(Collectors.toList()));
         int count = 0;
         for (Future<Integer> f: l) {count+=f.get();}
-        assert count == 100;
+        assertEquals(count,100);
     }
 
 }

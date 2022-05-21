@@ -1,14 +1,16 @@
-FROM openjdk:11-slim
+FROM arm32v7/adoptopenjdk:11-jre-hotspot
 
 ENV NAME=executor
 ENV VERSION=3.0
 ENV JAR=$NAME-${VERSION}.jar
+ENV TEST_JAR=$NAME-${VERSION}-tests.jar
 ENV INPUT=""
 ENV JVM_EXTRA=""
 
 WORKDIR $NAME
 
 ADD target/$JAR .
+ADD target/$TEST_JAR .
 ADD target/lib lib
 ADD src/test/bin/run.sh .
 

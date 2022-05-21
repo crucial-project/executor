@@ -5,6 +5,7 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.crucial.executor.ByteMarshaller;
+import org.crucial.executor.Config;
 import org.crucial.executor.ServerlessExecutorService;
 
 import java.io.IOException;
@@ -13,34 +14,29 @@ import java.util.concurrent.TimeUnit;
 
 public class KubernetesExecutorService extends ServerlessExecutorService {
 
-    private KubernetesInvoker invoker;
+    private final KubernetesInvoker invoker;
     private final String jobName;
     private final String image;
+    private final String token;
 
+    public KubernetesExecutorService() {
+        jobName = properties.containsKey(Config.K8S_JOB_NAME) ?
+                properties.getProperty(Config.K8S_JOB_NAME) : Config.K8S_JOB_NAME_DEFAULT;
+        image = properties.containsKey(Config.K8S_IMAGE) ?
+                properties.getProperty(Config.K8S_IMAGE) : Config.K8S_IMAGE_DEFAULT;
+        token = properties.containsKey(Config.K8S_TOKEN) ?
+                properties.getProperty(Config.K8S_TOKEN) : Config.K8S_TOKEN_DEFAULT;
 
-    public KubernetesExecutorService(String jobName, String image) {
-        this.jobName = jobName;
-        this.image = image;
-        init();
-    }
-    private void init() {
-        invoker = new KubernetesInvoker(this.jobName, this.image);
+        invoker = new KubernetesInvoker(this.jobName, this.image, this.token);
     }
 
     @Override
-    protected byte[] invokeExternal(byte[] input)  {
-        debug(this.printPrefix() + "Calling k8s job.");
-        String response = invoker.invoke(input, super.getListen(), super.getport(), super.getServiceName());
+    protected byte[] invokeExternal(byte[] threadCall)  {
+        debug("Calling k8s job.");
+        byte[] response = invoker.invoke(threadCall, super.getListen(), super.getport(), super.getServiceName());
         assert response != null;
-        debug(this.printPrefix() + "K8s call completed.");
-
-        try {
-            byte[] ret = ByteMarshaller.toBytes(response);
-            return ret;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        debug("K8s call completed.");
+        return response;
     }
 
     @Override

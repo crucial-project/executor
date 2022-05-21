@@ -1,6 +1,7 @@
 package org.crucial.executor.k8s;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -18,37 +19,36 @@ import org.crucial.executor.Json;
 public class KubernetesInvoker {
 
     private String jobName;
-    private final String image;
+    private String image;
+    private String token;
+
     private KubernetesService service;
 
-    public KubernetesInvoker(String jobName, String image) {
+    public KubernetesInvoker(String jobName, String image, String token) {
         this.jobName = jobName;
         this.image = image;
+        this.token = token;
     }
 
-    public String invoke(byte[] input, boolean listen, int port, String serviceName) {
-
-        String joblog = null;
-
+    public byte[] invoke(byte[] input, boolean listen, int port, String serviceName) {
         String myName = jobName + "-" + Thread.currentThread().getName();
+        myName = jobName;
 
         String selectorKey = "job";
         String selectorValue = myName;
 
-
-        String mainClass = "org.crucial.executor.k8s.KubernetesHandler";
-        String libs = "/usr/local/executor.jar:/usr/local/executor-tests.jar:/usr/local/lib/*:.";
-        List<String> command = Arrays.asList("java","-classpath", libs, mainClass, Json.toJson(input));
-
         ConfigBuilder configBuilder = new ConfigBuilder();
-        configBuilder.withOauthToken("eyJhbGciOiJSUzI1NiIsImtpZCI6ImlzXzhOSjdGYjFlT3NGdU9jRWpQM3M0bWxHazl0Uzc1bUdKMnVGM0hPaWMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tcXRoNXoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjNkMDdhOTIwLTAyNDYtNDUxNi05ZDQ1LTFhN2Y5NDE3NTljMiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.rVKd9V492fqF1JRPdH0cE8X8bFannRn9spzNq0r2lL9TIHLeOsXzbrm8XHhOrIBLjJhA9YLifk8ULMr1B7lZ3QivB4Tw1oPK4qYPTp3n_ntD_bEXmDzSDo66MfzE7MRgiHO8TIcPNuBKQ3RBPbf1edB7ZqwRd-jkGhgGH0qHcPChoOfxN8TUb5T4RGlqpFZ9NFxyfeScqcxQHwtdSrp7rGz5HAMrIlb6Zra39O1IQ66vYziCAFj_dVyQ66TlRS-NF0I2-mgGM8TS2yB6sdz3f2JvE8xdjETZCEFt9atg3JaNeQYGue0d0M9Gv6ss7BGLqyl37EwYpWrg_5LB3BAyvw");
-        try (KubernetesClient client = new DefaultKubernetesClient(configBuilder.build())) {
+
+        configBuilder.withOauthToken(token);
+
+        try{
+            KubernetesClient client = new DefaultKubernetesClient(configBuilder.build());
             final String namespace = "default";
             final Job job = new JobBuilder()
                     .withApiVersion("batch/v1")
                     .withNewMetadata()
                     .withName(myName)
-                    .addToLabels("name", myName)
+//                    .addToLabels("name", myName)
                     .endMetadata()
                     .withNewSpec()
                     .withNewTemplate()
@@ -57,9 +57,18 @@ public class KubernetesInvoker {
                     .endMetadata()
                     .withNewSpec()
                     .addNewContainer()
-                    .withName(myName)
+                    .withImagePullPolicy("Always")
+                    .withName("a")
                     .withImage(image)
-                    .withCommand(command)
+                    .addNewEnv()
+                    .withName("INPUT")
+                    .withValue(Json.toJson(input))
+                    .endEnv()
+                    //.withCommand(command)
+                    .addNewEnv()
+                    .withName("JVM_EXTRA")
+                    .withValue("")
+                    .endEnv()
                     .endContainer()
                     .withRestartPolicy("Never")
                     .endSpec()
@@ -67,7 +76,8 @@ public class KubernetesInvoker {
                     .endSpec()
                     .build();
 
-            System.out.println("Creating job " + myName);
+            assert client.batch().v1().jobs().inNamespace(namespace) != null;
+
             client.batch().v1().jobs().inNamespace(namespace).createOrReplace(job);
 
             if (listen) {
@@ -76,25 +86,23 @@ public class KubernetesInvoker {
                 service.start(serviceName, selectorKey, selectorValue, port);
             }
 
-            Thread.sleep(1000);
-            // Get All pods created by the job
-            PodList podList = client.pods().inNamespace(namespace).withLabel("job-name", job.getMetadata().getName()).list();
+            PodList podList;
+            do {
+                 podList = client.pods().inNamespace(namespace).withLabel("job-name", job.getMetadata().getName()).list();
+            } while(podList.getItems().isEmpty());
 
-            // Wait for pod to complete
             client.pods().inNamespace(namespace).withName(podList.getItems().get(0).getMetadata().getName())
                     .waitUntilCondition(pod -> pod.getStatus().getPhase().equals("Succeeded"), 2, TimeUnit.MINUTES);
 
-            // Print Job's log
-            joblog = client.pods().inNamespace(namespace).withName(podList.getItems().get(0).getMetadata().getName()).getLog();
+            return Json.fromJson(client.pods().inNamespace(namespace).withName(podList.getItems().get(0).getMetadata().getName()).getLog());
 
-            return joblog;
-
-        } catch (KubernetesClientException | InterruptedException e) {
+        } catch (KubernetesClientException e) {
             e.printStackTrace();
             throw new IllegalStateException(e.getMessage());
         }
 
     }
+
 }
 
 

@@ -1,7 +1,12 @@
 package org.crucial.executor;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -26,8 +31,28 @@ public abstract class ServerlessExecutorService implements ExecutorService {
     private int port = 0;
     private String serviceName = null;
 
-    public ServerlessExecutorService() {
+    protected boolean debug = false;
+
+    protected Properties properties;
+
+    public ServerlessExecutorService(){
+        this(System.getProperties());
+    }
+
+    public ServerlessExecutorService(Properties properties) {
         executorService = Executors.newCachedThreadPool();
+        this.properties = properties;
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream(Config.CONFIG_FILE);
+            properties.load(is);
+            Path path = Paths.get(Config.CONFIG_FILE);
+            is = new ByteArrayInputStream(Files.readAllBytes(path));
+            properties.load(is);
+        } catch (IOException e) {
+            // ignore
+        }
+        debug |= Boolean.parseBoolean(properties.containsKey(Config.DEBUG) ?
+                properties.getProperty(Config.DEBUG) : Config.DEBUG_DEFAULT);
     }
 
     protected String printExecutorPrefix() {
@@ -294,7 +319,7 @@ public abstract class ServerlessExecutorService implements ExecutorService {
     public abstract Dictionary<String, String> getServiceSpecs(String serviceName) ;
 
     protected void debug(String message){
-        System.err.println(ANSI_RED + message + ANSI_RESET);
+        if (debug) System.err.println(ANSI_RED + this.printPrefix() + message + ANSI_RESET);
     }
 
     /**

@@ -1,16 +1,17 @@
 package org.crucial.executor;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.concurrent.Callable;
 
 /**
  * Packages the needed elements to send to a cloud thread. Such as the Runnable
  * or Callable, and the name of that thread (ID).
  */
-class ThreadCall implements Serializable {
+class ThreadCall implements Externalizable {
     private String threadName;
     private Callable target;
-    private static final long serialVersionUID = 1L;
+
+    public ThreadCall(){}
 
     public ThreadCall(String threadName) {
         this.threadName = threadName;
@@ -52,5 +53,17 @@ class ThreadCall implements Serializable {
             target.run();
             return null;
         };
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(this.threadName);
+        out.writeObject(this.target);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.threadName = (String) in.readObject();
+        this.target = (Callable) in.readObject();
     }
 }

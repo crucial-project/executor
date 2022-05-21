@@ -6,6 +6,13 @@ else
     TAG="$1"
 fi
 
+
+if [ -z "$2" ]; then
+  DOCKERFILE=${DIR}/../docker/Dockerfile
+else
+  DOCKERFILE=$2
+fi
+
 DOCKER_USER=$(docker info |
     grep Username |
     awk '{print $2}')
@@ -15,7 +22,6 @@ fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 IMAGE=${DOCKER_USER}/executor:${TAG}
-DOCKERFILE=${DIR}/../docker/Dockerfile
 
 pushd ${DIR}/../../../
 
